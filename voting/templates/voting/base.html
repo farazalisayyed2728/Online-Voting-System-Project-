@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Voting System - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+          
+            <div class="logo">G.H raisoni voting site</div>
+            <div class="navbar-links">
+            {% comment %} <nav class="navbar" style="background-image: url('{% static "img/vote-voting.jpg" %}'); background-size: cover; background-position: center;"> {% endcomment %}
+
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'election_list' %}">Elections</a>
+                {% if user.is_authenticated %}
+                   <form action="{% url 'logout' %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" 
+        style="
+            background-color: #dc3545;     /* red color */
+            color: white;                  /* white text */
+            border: none;                  /* no border */
+            padding: 8px 16px;             /* button size */
+            border-radius: 6px;            /* rounded corners */
+            cursor: pointer;               /* hand cursor */
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        ">
+        Logout
+    </button>
+</form>
+
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-secondary">Register</a>
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        
+        {% block content %}
+        {% endblock %}
+    </div>
+  <footer class="footer-container2">
+    <img src="{% static 'images/logo.jpg' %}" class="footer-logo" alt="Logo">
+
+    <p class="footer-college">
+        G.H Raisoni College of Engineering and <br>
+        Business Management
+    </p>
+</footer>
+
+
+
+</footer>
+</body>
+</html>

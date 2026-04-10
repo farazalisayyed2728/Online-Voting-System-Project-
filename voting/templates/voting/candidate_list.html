@@ -1,0 +1,35 @@
+{% extends "voting/base.html" %}
+{% block title %}Candidates for {{ election.title }}{% endblock %}
+
+{% block content %}
+<h1 class="section-title">Vote in: {{ election.title }}</h1>
+<p>{{ election.description }}</p>
+
+{% if has_voted %}
+    <div class="messages"><li class="success">You have already cast your vote in this election. Thank you! <a href="{% url 'result' election.id %}">View Results</a></li></div>
+{% elif not is_open %}
+    <div class="messages"><li class="error">Voting is closed for this election. <a href="{% url 'result' election.id %}">View Final Results</a></li></div>
+{% endif %}
+
+<h2 style="margin-top: 30px;">Candidates:</h2>
+
+<div class="card-grid">
+    {% for candidate in candidates %}
+        <div class="card">
+            <h3>{{ candidate.name }}</h3>
+            <p style="font-style: italic;">"{{ candidate.manifesto|default:'No manifesto provided.' }}"</p>
+            
+            {% if is_open and not has_voted %}
+            <a href="{% url 'vote' election.id candidate.id %}" class="btn btn-primary" onclick="return confirm('Are you sure you want to vote for {{ candidate.name }}? This action cannot be undone.');">Vote for {{ candidate.name }}</a>
+
+            {% elif not is_open %}
+                <button class="btn btn-secondary" disabled>Election Closed</button>
+            {% else %}
+                <button class="btn btn-secondary" disabled>Already Voted</button>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No candidates have been registered for this election yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

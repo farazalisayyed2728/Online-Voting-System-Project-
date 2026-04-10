@@ -1,0 +1,35 @@
+{% extends "voting/base.html" %}
+{% block title %}Results for {{ election.title }}{% endblock %}
+
+{% block content %}
+<h1 class="section-title">Final Results: {{ election.title }}</h1>
+<h2 style="color: #6c757d;">Total Votes Cast: {{ total_votes }}</h2>
+
+{% if not results %}
+    <p>No votes have been cast yet, or no candidates exist.</p>
+{% else %}
+<div class="card-grid" style="grid-template-columns: 1fr;">
+    {% for candidate in results %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3>{{ candidate.name }}</h3>
+            <span style="font-size: 1.2rem; font-weight: bold; color: #007bff;">
+                {{ candidate.vote_count }} Votes
+            </span>
+        </div>
+
+        <div style="background-color: #e9ecef; border-radius: 4px; overflow: hidden;">
+            <div class="result-bar" style="width: {{ candidate.percentage|floatformat:0 }}%;">
+                {{ candidate.percentage|floatformat:2 }}%
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<p style="margin-top: 30px;">
+    <a href="{% url 'election_list' %}" class="btn btn-primary" >Back to Elections</a>
+    
+</p>
+{% endblock %}

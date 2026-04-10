@@ -1,0 +1,23 @@
+{% extends "voting/base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1 class="section-title" style="text-align: center;">Register Account</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Register</button>
+    </form>
+    <p style="text-align: center; margin-top: 20px;">
+        Already have an account? <a href="{% url 'login' %}">Login here</a>
+    </p>
+</div>
+{% endblock %}

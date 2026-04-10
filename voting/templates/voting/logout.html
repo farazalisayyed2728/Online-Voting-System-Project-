@@ -1,0 +1,10 @@
+{% extends "voting/base.html" %}
+{% block title %}Logged Out{% endblock %}
+
+{% block content %}
+<div class="form-container" style="text-align: center;">
+    <h1 class="section-title">You have been logged out</h1>
+    <p>Thank you for using the Online Voting System.</p>
+    <a href="{% url 'login' %}" class="btn btn-primary" style="margin-top: 20px;">Log In Again</a>
+</div>
+{% endblock %}

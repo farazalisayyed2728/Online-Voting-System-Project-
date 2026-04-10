@@ -1,0 +1,28 @@
+{% extends "voting/base.html" %}
+{% block title %}All Elections{% endblock %}
+
+{% block content %}
+
+<h1 class="section-title">All Elections</h1>
+
+<div class="card-grid">
+    {% for election in elections %}
+        <div class="card">
+            <h3>{{ election.title }}</h3>
+            <p>{{ election.description|truncatewords:20 }}</p>
+            {% if election.is_open %}
+                <p style="color: green; font-weight: bold;">Status: OPEN</p>
+                <p>Ends: {{ election.end_date|date:"F d, Y P" }}</p>
+                 <a href="{% url 'election_results' election.id %}" class="btn btn-primary">View Results</a>
+
+            {% else %}
+                <p style="color: red; font-weight: bold;">Status: CLOSED</p>
+                <a href="{% url 'election_results' election.id %}" class="btn btn-primary">View Results</a>
+
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No elections have been created yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}
