@@ -19,7 +19,7 @@
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'election_list' %}">Elections</a>
                 {% if user.is_authenticated %}
-                   <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                   <form action="{% url 'logout' %}" method="post" style =" display:inline; ">
     {% csrf_token %}
     <button type="submit" 
         style="
