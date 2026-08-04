@@ -111,17 +111,16 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+
+STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / "voting/static",
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# This tells Django where to look for static files in the 'voting' app
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'voting/static'),
-]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
