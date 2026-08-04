@@ -1,5 +1,12 @@
 from pathlib import Path
 import os
+print(os.environ.get("DATABASE_URL"))
+
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -65,11 +72,15 @@ WSGI_APPLICATION = 'online_voting.wsgi.application'
 # Using SQLite for simplicity. For production, consider PostgreSQL.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=0,
+        conn_health_checks=True,
+    )
 }
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
