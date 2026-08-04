@@ -14,6 +14,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     ".vercel.app",
+    
 ]
 
 
@@ -62,14 +63,14 @@ WSGI_APPLICATION = 'online_voting.wsgi.application'
 
 # Database
 # Using SQLite for simplicity. For production, consider PostgreSQL.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -113,3 +114,5 @@ LOGIN_URL = 'login'
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+
