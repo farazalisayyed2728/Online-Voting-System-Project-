@@ -1,7 +1,7 @@
 {
   "builds": [
     {
-      "src": "online_voting/wsgi.py",
+      "src": "manage.py",
       "use": "@vercel/python"
     }
   ],
