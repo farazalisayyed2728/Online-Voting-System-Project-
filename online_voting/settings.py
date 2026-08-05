@@ -111,10 +111,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    BASE_DIR / "voting/static",
+    BASE_DIR / "voting" / "static",
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -133,3 +133,8 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
