@@ -9,4 +9,4 @@ tzdata==2025.2
 python-dotenv
 psycopg2-binary
 dj-database-url
-whitenoise==6.x.x
+whitenoise==6.9.0
