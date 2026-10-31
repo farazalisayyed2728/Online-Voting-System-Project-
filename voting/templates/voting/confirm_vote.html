@@ -1,0 +1,19 @@
+{% extends "voting/base.html" %}
+{% block title %}Confirm your ballot{% endblock %}
+{% block breadcrumb %}<a href="{% url 'home' %}">Workspace</a> <span>/</span> <a href="{% url 'candidate_list' election.id %}">{{ election.title }}</a> <span>/</span> Confirm{% endblock %}
+{% block content %}
+<section class="confirmation-card">
+    <span class="confirmation-icon">✓</span>
+    <div class="eyebrow">FINAL REVIEW</div>
+    <h1>Confirm your selection</h1>
+    <p class="muted">You are submitting a ballot for <strong>{{ election.title }}</strong>.</p>
+    <div class="selected-candidate"><div class="candidate-avatar">{{ candidate.name|first|upper }}</div><div><span class="eyebrow">YOUR SELECTION</span><h2>{{ candidate.name }}</h2>{% if candidate.party %}<p>{{ candidate.party }}</p>{% endif %}</div></div>
+    {% if profile.approval_status != 'approved' or not profile.email_verified %}
+        <div class="notice notice-warning">Your account must be email-verified and approved before voting. You can still review this selection.</div>
+        <a class="button button-secondary" href="{% url 'candidate_list' election.id %}">Back to candidates</a>
+    {% else %}
+        <div class="notice">Once submitted, your vote cannot be changed. Your identity is recorded separately from your ballot.</div>
+        <form method="post" action="{% url 'cast_vote' election.id %}" class="confirmation-actions">{% csrf_token %}<input type="hidden" name="candidate_id" value="{{ candidate.id }}"><a class="button button-secondary" href="{% url 'candidate_list' election.id %}">Review candidates</a><button type="submit" class="button button-primary">Submit my ballot <span>→</span></button></form>
+    {% endif %}
+</section>
+{% endblock %}

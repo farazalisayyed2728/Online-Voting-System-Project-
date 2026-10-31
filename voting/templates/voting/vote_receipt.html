@@ -1,0 +1,12 @@
+{% extends "voting/base.html" %}
+{% block title %}Ballot received{% endblock %}
+{% block content %}
+<section class="confirmation-card receipt-card">
+    <span class="confirmation-icon">✓</span>
+    <div class="eyebrow">BALLOT RECORDED</div>
+    <h1>Your vote has been received.</h1>
+    <p class="muted">Your participation in <strong>{{ election.title }}</strong> is recorded. Your candidate selection is not connected to your voter account.</p>
+    <div class="receipt-box"><span>ANONYMOUS RECEIPT</span><code>{{ receipt }}</code><small>Keep this reference if you need to confirm your submission.</small></div>
+    <a class="button button-primary" href="{% url 'home' %}">Return to dashboard</a>
+</section>
+{% endblock %}

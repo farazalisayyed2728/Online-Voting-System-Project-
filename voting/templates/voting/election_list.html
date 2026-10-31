@@ -1,28 +1,13 @@
 {% extends "voting/base.html" %}
-{% block title %}All Elections{% endblock %}
-
+{% block title %}Elections{% endblock %}
+{% block breadcrumb %}<a href="{% url 'home' %}">Workspace</a> <span>/</span> Elections{% endblock %}
 {% block content %}
-
-<h1 class="section-title">All Elections</h1>
-
-<div class="card-grid">
+<header class="page-heading"><div><div class="eyebrow">DISCOVER AND PARTICIPATE</div><h1>Election directory</h1><p>Explore scheduled and completed elections from your organization.</p></div></header>
+<form class="filter-bar" method="get"><label class="search-box"><span>⌕</span><input type="search" name="q" value="{{ query }}" placeholder="Search elections"></label><select name="status" aria-label="Filter by status"><option value="">All statuses</option><option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option><option value="upcoming" {% if status_filter == 'upcoming' %}selected{% endif %}>Upcoming</option><option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option></select><button class="button button-secondary" type="submit">Apply filters</button></form>
+<div class="election-grid">
     {% for election in elections %}
-        <div class="card">
-            <h3>{{ election.title }}</h3>
-            <p>{{ election.description|truncatewords:20 }}</p>
-            {% if election.is_open %}
-                <p style="color: green; font-weight: bold;">Status: OPEN</p>
-                <p>Ends: {{ election.end_date|date:"F d, Y P" }}</p>
-                 <a href="{% url 'election_results' election.id %}" class="btn btn-primary">View Results</a>
-
-            {% else %}
-                <p style="color: red; font-weight: bold;">Status: CLOSED</p>
-                <a href="{% url 'election_results' election.id %}" class="btn btn-primary">View Results</a>
-
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>No elections have been created yet.</p>
-    {% endfor %}
+        <article class="directory-card"><div class="directory-card-top"><span class="pill {% if election.status == 'active' %}pill-active{% elif election.status == 'upcoming' %}pill-upcoming{% else %}pill-complete{% endif %}">{{ election.status|title }}</span><span class="candidate-count">{{ election.candidate_set.count }} candidates</span></div><h2>{{ election.title }}</h2><p>{{ election.description|truncatewords:25 }}</p><div class="directory-dates"><span>Starts {{ election.start_date|date:"M j, Y" }}</span><span>Ends {{ election.end_date|date:"M j, Y" }}</span></div><div class="directory-actions">{% if user.is_authenticated %}<a class="button button-primary button-small" href="{% url 'candidate_list' election.id %}">View election</a>{% else %}<a class="button button-primary button-small" href="{% url 'login' %}?next={% url 'candidate_list' election.id %}">Sign in to participate</a>{% endif %}{% if election.results_published_at %}<a class="button button-secondary button-small" href="{% url 'election_results' election.id %}">Results</a>{% endif %}</div></article>
+    {% empty %}<div class="empty-state"><strong>No elections match your search</strong><p>Try changing the status filter or search phrase.</p></div>{% endfor %}
 </div>
+{% if elections.paginator.num_pages > 1 %}<nav class="pagination" aria-label="Election pages">{% if elections.has_previous %}<a href="?q={{ query|urlencode }}&status={{ status_filter }}&page={{ elections.previous_page_number }}">← Previous</a>{% endif %}<span>Page {{ elections.number }} of {{ elections.paginator.num_pages }}</span>{% if elections.has_next %}<a href="?q={{ query|urlencode }}&status={{ status_filter }}&page={{ elections.next_page_number }}">Next →</a>{% endif %}</nav>{% endif %}
 {% endblock %}

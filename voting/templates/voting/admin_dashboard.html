@@ -1,0 +1,20 @@
+{% extends "voting/base.html" %}
+{% block title %}Election management{% endblock %}
+{% block breadcrumb %}<a href="{% url 'home' %}">Workspace</a> <span>/</span> Management{% endblock %}
+{% block content %}
+<header class="page-heading"><div><div class="eyebrow">ADMINISTRATION</div><h1>Election management</h1><p>Monitor participation, manage voters, and publish election results.</p></div>{% if can_manage_users %}<a class="button button-primary" href="{% url 'admin:index' %}">Open admin console <span>↗</span></a>{% endif %}</header>
+<section class="stat-grid admin-stats">
+    <article class="stat-card"><span class="stat-icon violet">▦</span><span class="stat-label">Active elections</span><strong>{{ active_count }}</strong><small>Currently accepting votes</small></article>
+    <article class="stat-card"><span class="stat-icon blue">♙</span><span class="stat-label">Registered voters</span><strong>{{ total_voters }}</strong><small>Approved voter accounts</small></article>
+    <article class="stat-card"><span class="stat-icon mint">✓</span><span class="stat-label">Anonymous ballots</span><strong>{{ vote_count }}</strong><small>Across managed elections</small></article>
+    <article class="stat-card"><span class="stat-icon amber">◷</span><span class="stat-label">Participation</span><strong>{{ participation }}%</strong><small>Ballots per approved voter</small></article>
+</section>
+{% if can_manage_users %}<div class="management-shortcuts"><a href="{% url 'admin:voting_election_add' %}">＋ Create election</a><a href="{% url 'admin:voting_candidate_changelist' %}">Manage candidates</a><a href="{% url 'admin:voting_voterprofile_changelist' %}">Review voters <span class="shortcut-count">{{ pending_voters }} pending</span></a><a href="{% url 'admin:voting_auditlog_changelist' %}">Audit log</a></div>{% endif %}
+<div class="management-columns">
+    <section class="side-card"><div class="section-heading"><div><div class="eyebrow">ELECTION PIPELINE</div><h2>Recent elections</h2></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Election</th><th>Status</th><th>Ballots</th><th></th></tr></thead><tbody>
+        {% for election in elections %}<tr><td><strong>{{ election.title }}</strong><small>{{ election.start_date|date:"M j, Y" }} – {{ election.end_date|date:"M j, Y" }}</small></td><td><span class="pill {% if election.status == 'active' %}pill-active{% elif election.status == 'upcoming' %}pill-upcoming{% else %}pill-complete{% endif %}">{{ election.status|title }}</span></td><td>{{ election.ballots.count }}</td><td><a href="{% url 'election_results' election.id %}">Open →</a></td></tr>{% empty %}<tr><td colspan="4">No elections are available.</td></tr>{% endfor %}
+    </tbody></table></div></section>
+    <aside class="side-card"><div class="eyebrow">COMPLETED</div><h2>{{ completed_count }} elections</h2><p class="muted">Results are only visible to voters after an authorized manager publishes them.</p><div class="privacy-card compact-privacy"><span class="privacy-mark">✳</span><h3>Ballot privacy</h3><p>Voter eligibility is recorded separately from candidate selection.</p></div></aside>
+</div>
+{% if can_manage_users %}<section class="side-card audit-preview"><div class="section-heading"><div><div class="eyebrow">ACCOUNTABILITY</div><h2>Recent administrative activity</h2></div><a href="{% url 'admin:voting_auditlog_changelist' %}" class="text-link">View audit log →</a></div>{% for item in recent_audit %}<div class="audit-row"><span class="audit-dot"></span><span><strong>{{ item.action }}</strong><small>{% if item.user %}{{ item.user.username }} · {% endif %}{{ item.timestamp|date:"M j, Y · P" }}</small></span></div>{% empty %}<p class="muted">Administrative events will be recorded here.</p>{% endfor %}</section>{% endif %}
+{% endblock %}

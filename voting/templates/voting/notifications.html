@@ -1,0 +1,8 @@
+{% extends "voting/base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<header class="page-heading"><div><div class="eyebrow">UPDATES</div><h1>Notifications</h1><p>Election announcements and account updates.</p></div></header>
+<section class="notification-list">
+    {% for notification in notifications %}<article class="notification-card"><span class="stat-icon mint">♧</span><div><h2>{{ notification.title }}</h2><p>{{ notification.message }}</p><time>{{ notification.created_at|date:"F j, Y · P" }}</time></div></article>{% empty %}<div class="empty-state"><strong>You're all caught up</strong><p>New announcements will appear here.</p></div>{% endfor %}
+</section>
+{% endblock %}

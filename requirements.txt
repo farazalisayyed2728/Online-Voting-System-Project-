@@ -10,3 +10,7 @@ python-dotenv
 psycopg2-binary
 dj-database-url
 whitenoise==6.9.0
+djangorestframework>=3.15,<4.0
+celery>=5.4,<6.0
+django-redis>=5.4,<6.0
+redis>=5.0,<7.0

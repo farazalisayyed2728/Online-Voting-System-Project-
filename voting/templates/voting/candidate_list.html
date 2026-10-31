@@ -1,35 +1,21 @@
 {% extends "voting/base.html" %}
-{% block title %}Candidates for {{ election.title }}{% endblock %}
-
+{% block title %}{{ election.title }}{% endblock %}
+{% block breadcrumb %}<a href="{% url 'home' %}">Workspace</a> <span>/</span> Elections <span>/</span> {{ election.title }}{% endblock %}
 {% block content %}
-<h1 class="section-title">Vote in: {{ election.title }}</h1>
-<p>{{ election.description }}</p>
-
-{% if has_voted %}
-    <div class="messages"><li class="success">You have already cast your vote in this election. Thank you! <a href="{% url 'result' election.id %}">View Results</a></li></div>
-{% elif not is_open %}
-    <div class="messages"><li class="error">Voting is closed for this election. <a href="{% url 'result' election.id %}">View Final Results</a></li></div>
-{% endif %}
-
-<h2 style="margin-top: 30px;">Candidates:</h2>
-
-<div class="card-grid">
+<header class="page-heading">
+    <div><span class="pill {% if is_open %}pill-active{% else %}pill-complete{% endif %}">{% if is_open %}Voting open{% else %}{{ election.status|title }}{% endif %}</span><h1>{{ election.title }}</h1><p>{{ election.description }}</p></div>
+    {% if election.results_published_at %}<a class="button button-secondary" href="{% url 'election_results' election.id %}">View published results</a>{% endif %}
+</header>
+{% if has_voted %}<div class="notice notice-success"><strong>Your participation is recorded.</strong> Your ballot choice remains anonymous.{% if election.results_published_at %} <a href="{% url 'election_results' election.id %}">View published results</a>{% endif %}</div>{% endif %}
+{% if not is_open and not has_voted %}<div class="notice">Voting is not currently open for this election.</div>{% endif %}
+<div class="section-heading candidate-heading"><div><div class="eyebrow">MEET THE CANDIDATES</div><h2>Review your options</h2></div><span class="muted">{{ candidates|length }} candidates</span></div>
+<div class="candidate-grid">
     {% for candidate in candidates %}
-        <div class="card">
-            <h3>{{ candidate.name }}</h3>
-            <p style="font-style: italic;">"{{ candidate.manifesto|default:'No manifesto provided.' }}"</p>
-            
-            {% if is_open and not has_voted %}
-            <a href="{% url 'vote' election.id candidate.id %}" class="btn btn-primary" onclick="return confirm('Are you sure you want to vote for {{ candidate.name }}? This action cannot be undone.');">Vote for {{ candidate.name }}</a>
-
-            {% elif not is_open %}
-                <button class="btn btn-secondary" disabled>Election Closed</button>
-            {% else %}
-                <button class="btn btn-secondary" disabled>Already Voted</button>
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>No candidates have been registered for this election yet.</p>
-    {% endfor %}
+        <article class="candidate-card">
+            <div class="candidate-avatar">{{ candidate.name|first|upper }}</div>
+            <div class="candidate-info">{% if candidate.party %}<span class="eyebrow">{{ candidate.party }}</span>{% endif %}<h3>{{ candidate.name }}</h3><p>{{ candidate.manifesto|default:"No candidate statement has been provided." }}</p></div>
+            {% if is_open and not has_voted %}<form method="post" action="{% url 'confirm_vote' election.id %}">{% csrf_token %}<input type="hidden" name="candidate_id" value="{{ candidate.id }}"><button class="button button-primary" type="submit">Review selection <span>→</span></button></form>{% endif %}
+        </article>
+    {% empty %}<div class="empty-state"><strong>No candidates have been added</strong><p>Please check back later.</p></div>{% endfor %}
 </div>
 {% endblock %}

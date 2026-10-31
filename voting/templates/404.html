@@ -1,0 +1,5 @@
+{% extends "voting/base.html" %}
+{% block title %}Not found{% endblock %}
+{% block content %}
+<section class="empty-state"><span class="empty-icon">◦</span><strong>That page isn't available</strong><p>The page may have moved, or you may not have permission to view it.</p><a href="{% url 'home' %}">Return to dashboard →</a></section>
+{% endblock %}

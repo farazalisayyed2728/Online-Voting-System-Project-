@@ -1,35 +1,34 @@
 {% extends "voting/base.html" %}
-{% block title %}Results for {{ election.title }}{% endblock %}
-
+{% block title %}{{ election.title }} results{% endblock %}
+{% block extra_head %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js" defer></script>{% endblock %}
 {% block content %}
-<h1 class="section-title">Final Results: {{ election.title }}</h1>
-<h2 style="color: #6c757d;">Total Votes Cast: {{ total_votes }}</h2>
-
-{% if not results %}
-    <p>No votes have been cast yet, or no candidates exist.</p>
-{% else %}
-<div class="card-grid" style="grid-template-columns: 1fr;">
-    {% for candidate in results %}
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3>{{ candidate.name }}</h3>
-            <span style="font-size: 1.2rem; font-weight: bold; color: #007bff;">
-                {{ candidate.vote_count }} Votes
-            </span>
-        </div>
-
-        <div style="background-color: #e9ecef; border-radius: 4px; overflow: hidden;">
-            <div class="result-bar" style="width: {{ candidate.percentage|floatformat:0 }}%;">
-                {{ candidate.percentage|floatformat:2 }}%
-            </div>
-        </div>
+<header class="page-heading"><div><div class="eyebrow">ELECTION RESULTS</div><h1>{{ election.title }}</h1><p>{% if election.results_published_at %}Published {{ election.results_published_at|date:"F j, Y · P" }}{% else %}Preview · results are not public yet{% endif %}</p></div>
+    {% if user.is_staff or user in election.managers.all %}{% if not election.results_published_at %}<form method="post" action="{% url 'publish_results' election.id %}">{% csrf_token %}<button class="button button-primary" type="submit">Publish results</button></form>{% endif %}{% endif %}
+</header>
+<section class="results-summary"><div><span class="eyebrow">TOTAL BALLOTS</span><strong>{{ total_votes }}</strong></div>{% if winner %}<div class="winner-block"><span class="eyebrow">LEADING CANDIDATE</span><strong>{{ winner.name }}</strong><small>{{ winner.vote_count }} votes · {{ winner.percentage }}%</small></div>{% endif %}<div><span class="eyebrow">PARTICIPATION RECORDS</span><strong>{{ result_data.participation_count|default:"—" }}</strong></div></section>
+{% if results %}
+    <div class="results-layout">
+        <section class="side-card chart-card"><div class="section-heading"><div><div class="eyebrow">VOTE SHARE</div><h2>Candidate breakdown</h2></div></div><div class="chart-wrap"><canvas id="results-chart" aria-label="Votes by candidate" role="img"></canvas></div></section>
+        <section class="side-card"><div class="section-heading"><div><div class="eyebrow">OFFICIAL COUNT</div><h2>Results by candidate</h2></div></div>
+            <div class="result-list">{% for candidate in results %}<article class="result-row"><div class="result-row-top"><div class="candidate-avatar small-avatar">{{ candidate.name|first|upper }}</div><div class="result-candidate"><strong>{{ candidate.name }}</strong>{% if candidate.party %}<small>{{ candidate.party }}</small>{% endif %}</div><div class="result-tally"><strong>{{ candidate.vote_count }}</strong><small>{{ candidate.percentage }}%</small></div></div><div class="progress-track"><div class="progress-fill" style="width: {{ candidate.percentage }}%"></div></div></article>{% endfor %}</div>
+        </section>
     </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-<p style="margin-top: 30px;">
-    <a href="{% url 'election_list' %}" class="btn btn-primary" >Back to Elections</a>
-    
-</p>
+{% else %}<div class="empty-state"><strong>No ballots have been submitted</strong><p>Results will appear once voting activity is recorded.</p></div>{% endif %}
+{{ chart_labels|json_script:"chart-labels" }}
+{{ chart_votes|json_script:"chart-votes" }}
+{% endblock %}
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById("results-chart");
+    if (!canvas || !window.Chart) return;
+    const labels = JSON.parse(document.getElementById("chart-labels").textContent);
+    const votes = JSON.parse(document.getElementById("chart-votes").textContent);
+    new Chart(canvas, {
+        type: "doughnut",
+        data: { labels, datasets: [{ data: votes, backgroundColor: ["#5846d8", "#24b889", "#f3a43b", "#5585e8", "#e36c83"], borderWidth: 0 }] },
+        options: { maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } }
+    });
+});
+</script>
 {% endblock %}
