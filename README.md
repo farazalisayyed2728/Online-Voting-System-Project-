@@ -58,7 +58,7 @@ Configure `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL
 
 ## Deploying to Vercel
 
-The included `vercel.json` builds static files and routes requests to Django. In Vercel, use the repository folder containing `manage.py`, `requirements.txt`, and `vercel.json` as the project root. Add these environment variables before deploying:
+The included `vercel.json` routes requests to Django. Vercel's legacy `builds` configuration does not run Project Settings build commands, so WhiteNoise serves the checked-in files in `staticfiles/` using stable URLs. After changing CSS, images, or other static assets, run `python manage.py collectstatic --noinput` and include the updated `staticfiles/` files in your commit. In Vercel, use the repository folder containing `manage.py`, `requirements.txt`, and `vercel.json` as the project root. Add these environment variables before deploying:
 
 - `SECRET_KEY`: generate a unique key and save it as a secret in Vercel; do not commit it.
 - `DEBUG`: `False`.
